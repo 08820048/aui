@@ -61,12 +61,15 @@ const activateMenuItem = (id) => {
     :class="{ 'sidebar-collapsed': isCollapsed }"
   >
     <!-- 侧边栏头部 -->
-    <div class="sidebar-header">
-      <h1 class="sidebar-title" v-if="!isCollapsed">网页美化工具</h1>
-      <div class="sidebar-logo" v-else>WB</div>
+    <div class="sidebar-header" :class="{ 'sidebar-header-collapsed': isCollapsed }">
+      <div class="title-container">
+        <h1 class="sidebar-title" v-if="!isCollapsed">网页美化工具</h1>
+        <div class="sidebar-logo" v-else>WB</div>
+      </div>
       <SidebarToggle
         :is-collapsed="isCollapsed"
         @toggle="toggleSidebar"
+        class="toggle-button"
       />
     </div>
 
@@ -108,6 +111,7 @@ const activateMenuItem = (id) => {
 
 .sidebar-collapsed {
   width: 72px;
+  padding: 1.5rem 0.5rem;
 }
 
 .sidebar-header {
@@ -116,6 +120,22 @@ const activateMenuItem = (id) => {
   justify-content: space-between;
   margin-bottom: 2rem;
   padding: 0 0.5rem;
+  position: relative;
+}
+
+.sidebar-header-collapsed {
+  justify-content: center;
+  padding: 0;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-button {
+  position: relative;
+  z-index: 5;
 }
 
 .sidebar-title {

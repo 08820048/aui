@@ -19,6 +19,7 @@ const toggleSidebar = () => {
 <template>
   <button
     class="toggle-btn neu-flat-sm transition-300"
+    :class="{ 'toggle-btn-collapsed': isCollapsed }"
     @click="toggleSidebar"
     :title="isCollapsed ? '展开菜单' : '收起菜单'"
   >
@@ -50,6 +51,17 @@ const toggleSidebar = () => {
   height: 36px;
   border: none;
   outline: none;
+  transition: all 0.3s ease;
+  color: var(--neu-text-color);
+  background-color: var(--neu-background);
+  border: 1px solid var(--neu-border-color);
+}
+
+.toggle-btn-collapsed {
+  width: 32px;
+  height: 32px;
+  padding: 0.4rem;
+  margin: 0 auto;
 }
 
 .toggle-btn:active {

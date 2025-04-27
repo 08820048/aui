@@ -69,8 +69,9 @@ const iconMap = {
 
 .menu-item-collapsed {
   justify-content: center;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .menu-icon {
