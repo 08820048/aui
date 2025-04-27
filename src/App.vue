@@ -138,13 +138,13 @@ const handleResize = () => {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  margin-left: 264px; /* 240px + 24px gap */
+  margin-left: 256px; /* 240px + 16px gap */
   transition: all 0.3s ease-in-out;
   padding: 1.25rem 1.5rem 1.5rem 1.5rem; /* 增加内边距，特别是左右内边距 */
 }
 
 .main-content-expanded {
-  margin-left: 96px; /* 72px + 24px gap */
+  margin-left: 88px; /* 72px + 16px gap */
 }
 
 .content-wrapper {

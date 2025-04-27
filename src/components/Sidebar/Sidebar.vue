@@ -88,9 +88,9 @@ const activateMenuItem = (id) => {
 <style scoped>
 .sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
+  top: 1.25rem; /* 与右侧容器顶部对齐 */
+  left: 1rem; /* 在左侧留出一定距离 */
+  height: calc(100% - 2.5rem); /* 与右侧容器高度一致 */
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -99,9 +99,8 @@ const activateMenuItem = (id) => {
   transition: all 0.3s ease;
   background-color: var(--neu-background);
   box-shadow: 5px 5px 15px var(--neu-shadow-dark), -5px -5px 15px var(--neu-shadow-light);
-  border-radius: 0 0.5rem 0.5rem 0; /* 统一圆角大小 */
-  margin: 0.5rem 0 0.5rem 0.5rem;
-  height: calc(100% - 1rem);
+  border-radius: 0.5rem; /* 四个角都有圆角 */
+  box-sizing: border-box; /* 确保内边距不会增加元素宽度 */
 }
 
 .sidebar-collapsed {
