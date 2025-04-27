@@ -85,7 +85,7 @@ const clearCode = () => {
           class="action-btn neu-flat-sm"
           @click="insertExampleCode"
           title="插入示例代码"
-          style="height: 28px; font-size: 12px; padding: 4px 10px;"
+          style="height: 28px; font-size: 12px; padding: 4px 10px; color: var(--neu-text-color);"
         >
           <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -100,7 +100,7 @@ const clearCode = () => {
           class="action-btn neu-flat-sm"
           @click="clearCode"
           title="清空代码"
-          style="height: 28px; font-size: 12px; padding: 4px 10px;"
+          style="height: 28px; font-size: 12px; padding: 4px 10px; color: var(--neu-text-color);"
         >
           <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
@@ -113,7 +113,7 @@ const clearCode = () => {
           class="action-btn neu-flat-sm beautify-btn"
           @click="beautifyCode"
           title="美化代码"
-          style="height: 28px; font-size: 12px; padding: 4px 10px;"
+          style="height: 28px; font-size: 12px; padding: 4px 10px; background-color: rgba(var(--neu-primary-color-rgb), 0.1) !important;"
         >
           <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20h9"></path>
@@ -234,11 +234,13 @@ const clearCode = () => {
 }
 
 .beautify-btn {
-  color: #333;
+  color: var(--neu-primary-color) !important; /* 使用主题主色，并强制应用 */
   font-weight: 600; /* 增加字重 */
-  background-color: #e6e6e6; /* 稍微深色背景，增强对比度 */
+  background-color: rgba(var(--neu-primary-color-rgb, 79, 79, 79), 0.1) !important; /* 半透明主色背景 */
   min-width: 7rem; /* 进一步增加宽度，突出主要按钮 */
-  box-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light); /* 增强阴影效果 */
+  box-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light) !important; /* 增强阴影效果 */
+  border: 1px solid var(--neu-border-color) !important; /* 确保边框也响应主题 */
+  transition: all var(--transition-time) ease !important; /* 确保过渡效果 */
 }
 
 .editor-content {

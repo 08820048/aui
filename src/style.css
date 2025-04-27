@@ -5,6 +5,7 @@
   --neu-shadow-dark: #bebebe;
   --neu-shadow-light: #ffffff;
   --neu-primary-color: #4f4f4f;
+  --neu-primary-color-rgb: 79, 79, 79; /* RGB值用于半透明效果 */
   --neu-text-color: #333333;
   --neu-border-color: rgba(0, 0, 0, 0.1);
   --neu-background-opacity: 1;
@@ -33,6 +34,7 @@
   --neu-shadow-dark: rgba(190, 190, 190, 0.5);
   --neu-shadow-light: rgba(255, 255, 255, 0.5);
   --neu-primary-color: #4f4f4f;
+  --neu-primary-color-rgb: 79, 79, 79;
   --neu-text-color: #333333;
   --neu-border-color: rgba(0, 0, 0, 0.1);
   --neu-background-opacity: 0.9;
@@ -45,6 +47,7 @@
   --neu-shadow-dark: rgba(150, 180, 210, 0.5);
   --neu-shadow-light: rgba(240, 250, 255, 0.5);
   --neu-primary-color: #2196f3;
+  --neu-primary-color-rgb: 33, 150, 243;
   --neu-text-color: #0d47a1;
   --neu-border-color: rgba(33, 150, 243, 0.2);
   --neu-background-opacity: 0.9;
@@ -57,6 +60,7 @@
   --neu-shadow-dark: rgba(10, 10, 10, 0.5);
   --neu-shadow-light: rgba(60, 60, 60, 0.5);
   --neu-primary-color: #00bcd4;
+  --neu-primary-color-rgb: 0, 188, 212;
   --neu-text-color: #e0e0e0;
   --neu-border-color: rgba(0, 188, 212, 0.3);
   --neu-background-opacity: 0.95;
@@ -69,6 +73,7 @@
   --neu-shadow-dark: rgba(150, 70, 120, 0.5);
   --neu-shadow-light: rgba(250, 200, 250, 0.5);
   --neu-primary-color: #f64f59;
+  --neu-primary-color-rgb: 246, 79, 89;
   --neu-text-color: #ffffff;
   --neu-border-color: rgba(246, 79, 89, 0.3);
   --neu-background-opacity: 0.85;

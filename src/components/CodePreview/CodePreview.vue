@@ -44,7 +44,7 @@ watch(() => props.html, (newHtml) => {
           class="theme-toggle neu-flat-sm"
           @click="toggleTheme"
           :title="isDark ? '切换为浅色主题' : '切换为深色主题'"
-          style="height: 28px; font-size: 12px; padding: 4px 10px;"
+          style="height: 28px; font-size: 12px; padding: 4px 10px; color: var(--neu-text-color);"
         >
           <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
