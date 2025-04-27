@@ -1,5 +1,7 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import { highlightCode } from '../../utils/highlighter';
+import CodeHighlight from './CodeHighlight.vue';
 
 // 接收父组件传递的属性
 const props = defineProps({
@@ -14,6 +16,9 @@ const emit = defineEmits(['update:modelValue', 'beautify']);
 
 // 本地代码内容
 const localCode = ref(props.modelValue);
+
+// 当前激活的标签页（编辑/预览）
+const activeTab = ref('edit');
 
 // 监听父组件传递的值变化
 watch(() => props.modelValue, (newValue) => {
@@ -125,13 +130,35 @@ const clearCode = () => {
     </div>
 
     <div class="editor-content neu-pressed">
-      <textarea
-        class="code-textarea"
-        :value="localCode"
-        @input="updateCode"
-        placeholder="在此输入HTML代码..."
-        spellcheck="false"
-      ></textarea>
+      <div class="editor-tabs">
+        <button
+          class="editor-tab"
+          :class="{ 'active': activeTab === 'edit' }"
+          @click="activeTab = 'edit'"
+        >
+          编辑
+        </button>
+        <button
+          class="editor-tab"
+          :class="{ 'active': activeTab === 'preview' }"
+          @click="activeTab = 'preview'"
+        >
+          预览
+        </button>
+      </div>
+      <div class="editor-panels">
+        <textarea
+          v-show="activeTab === 'edit'"
+          class="code-textarea"
+          :value="localCode"
+          @input="updateCode"
+          placeholder="在此输入HTML代码..."
+          spellcheck="false"
+        ></textarea>
+        <div v-show="activeTab === 'preview'" class="code-preview-panel">
+          <CodeHighlight :code="localCode" language="html" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -252,6 +279,42 @@ const clearCode = () => {
   width: calc(100% - 0px); /* 确保宽度与分隔条一致 */
 }
 
+.editor-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--neu-border-color);
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.editor-tab {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--neu-text-color);
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+.editor-tab.active {
+  border-bottom: 2px solid var(--neu-primary-color);
+  color: var(--neu-primary-color);
+  font-weight: 500;
+}
+
+.editor-tab:hover {
+  color: var(--neu-primary-color);
+}
+
+.editor-panels {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100% - 40px);
+}
+
 .code-textarea {
   width: 100%;
   height: 100%;
@@ -266,10 +329,15 @@ const clearCode = () => {
   color: var(--neu-text-color);
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
   border-radius: 0.5rem; /* 统一圆角大小 */
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+}
+
+.code-preview-panel {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 0;
+  background: transparent;
+  border-radius: 0.5rem;
+  box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
 }
 </style>

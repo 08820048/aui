@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue';
+import CodeHighlight from '../CodeEditor/CodeHighlight.vue';
 
 // 接收父组件传递的属性
 const props = defineProps({
@@ -18,6 +19,9 @@ const emit = defineEmits(['toggle-theme']);
 
 // 预览框架引用
 const previewFrame = ref(null);
+
+// 当前激活的标签页（渲染/代码）
+const activeTab = ref('render');
 
 // 切换主题
 const toggleTheme = () => {
@@ -65,16 +69,40 @@ watch(() => props.html, (newHtml) => {
       </div>
     </div>
 
-    <div
-      class="preview-content neu-pressed"
-      :class="{ 'preview-dark': isDark }"
-    >
-      <iframe
-        ref="previewFrame"
-        class="preview-frame"
-        sandbox="allow-same-origin allow-scripts"
-        title="代码预览"
-      ></iframe>
+    <div class="preview-tabs">
+      <button
+        class="preview-tab"
+        :class="{ 'active': activeTab === 'render' }"
+        @click="activeTab = 'render'"
+      >
+        渲染结果
+      </button>
+      <button
+        class="preview-tab"
+        :class="{ 'active': activeTab === 'code' }"
+        @click="activeTab = 'code'"
+      >
+        代码高亮
+      </button>
+    </div>
+
+    <div class="preview-panels">
+      <div
+        v-show="activeTab === 'render'"
+        class="preview-content neu-pressed"
+        :class="{ 'preview-dark': isDark }"
+      >
+        <iframe
+          ref="previewFrame"
+          class="preview-frame"
+          sandbox="allow-same-origin allow-scripts"
+          title="代码预览"
+        ></iframe>
+      </div>
+
+      <div v-show="activeTab === 'code'" class="code-highlight-container neu-pressed">
+        <CodeHighlight :code="html" language="html" />
+      </div>
     </div>
   </div>
 </template>
@@ -177,6 +205,42 @@ watch(() => props.html, (newHtml) => {
   overflow: visible; /* 防止图标被裁剪 */
 }
 
+.preview-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--neu-border-color);
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview-tab {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--neu-text-color);
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+.preview-tab.active {
+  border-bottom: 2px solid var(--neu-primary-color);
+  color: var(--neu-primary-color);
+  font-weight: 500;
+}
+
+.preview-tab:hover {
+  color: var(--neu-primary-color);
+}
+
+.preview-panels {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100% - 40px);
+}
+
 .preview-content {
   flex: 1;
   overflow: hidden;
@@ -187,10 +251,31 @@ watch(() => props.html, (newHtml) => {
   transition: all var(--transition-time) ease;
   border: 1px solid var(--neu-border-color);
   position: relative;
-  width: calc(100% - 0px); /* 确保宽度与分隔条一致 */
+  width: 100%; /* 确保宽度与分隔条一致 */
+  height: 100%;
+}
+
+.code-highlight-container {
+  flex: 1;
+  overflow: hidden;
+  margin: 0;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.1), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+  transition: all var(--transition-time) ease;
+  border: 1px solid var(--neu-border-color);
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .preview-dark {
+  background-color: #1a1a1a;
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(50, 50, 50, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark-frost .code-highlight-container {
   background-color: #1a1a1a;
   box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(50, 50, 50, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
