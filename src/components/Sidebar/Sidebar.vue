@@ -96,11 +96,14 @@ const activateMenuItem = (id) => {
   flex-direction: column;
   width: 240px;
   padding: 1.5rem 1rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-time) ease;
   background-color: var(--neu-background);
+  background-image: var(--neu-background-gradient);
   box-shadow: 5px 5px 15px var(--neu-shadow-dark), -5px -5px 15px var(--neu-shadow-light);
   border-radius: 0.5rem; /* 四个角都有圆角 */
   box-sizing: border-box; /* 确保内边距不会增加元素宽度 */
+  border: 1px solid var(--neu-border-color);
+  color: var(--neu-text-color);
 }
 
 .sidebar-collapsed {

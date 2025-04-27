@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar/Sidebar.vue';
 import CodeEditor from './components/CodeEditor/CodeEditor.vue';
 import CodePreview from './components/CodePreview/CodePreview.vue';
 import Resizer from './components/Resizer/Resizer.vue';
+import ThemeSwitcher from './components/ThemeSwitcher/ThemeSwitcher.vue';
 
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
@@ -80,12 +81,17 @@ const handleResize = () => {
 </script>
 
 <template>
-  <div class="app-container">
+  <div class="app-container transition-500">
     <!-- 侧边栏 -->
     <Sidebar
       :is-collapsed="isSidebarCollapsed"
       @toggle="toggleSidebar"
     />
+
+    <!-- 主题切换器 -->
+    <div class="theme-switcher-container">
+      <ThemeSwitcher />
+    </div>
 
     <!-- 主内容区域 -->
     <main
@@ -130,6 +136,14 @@ const handleResize = () => {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-image: var(--neu-background-gradient);
+}
+
+.theme-switcher-container {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 100;
 }
 
 .main-content {

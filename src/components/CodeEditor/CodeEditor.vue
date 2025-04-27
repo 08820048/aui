@@ -197,11 +197,13 @@ const clearCode = () => {
   font-weight: 500; /* 增加字重 */
   border: none;
   outline: none;
-  color: #555;
+  color: var(--neu-text-color);
   border-radius: 0.75rem; /* 增大圆角半径 */
   background-color: var(--neu-background);
+  background-image: var(--neu-background-gradient);
   box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
-  transition: all 0.2s ease;
+  transition: all var(--transition-time) ease;
+  border: 1px solid var(--neu-border-color);
   margin-left: 0.75rem; /* 增加按钮间距 */
   min-width: 5.5rem; /* 增加最小宽度，使按钮更长 */
   white-space: nowrap; /* 防止文本换行 */
@@ -211,13 +213,13 @@ const clearCode = () => {
 .action-btn:hover {
   transform: translateY(-1px);
   box-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light);
-  color: #333; /* 深色文字，增强对比度 */
+  color: var(--neu-primary-color); /* 使用主题主色 */
 }
 
 .action-btn:active {
   transform: translateY(0);
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
-  color: #333; /* 深色文字，增强对比度 */
+  color: var(--neu-primary-color); /* 使用主题主色 */
 }
 
 .action-btn > * {
@@ -259,7 +261,7 @@ const clearCode = () => {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 14px;
   line-height: 1.5;
-  color: #333;
+  color: var(--neu-text-color);
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
   border-radius: 0.5rem; /* 统一圆角大小 */
   position: absolute;

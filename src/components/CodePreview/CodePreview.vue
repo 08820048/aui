@@ -140,11 +140,13 @@ watch(() => props.html, (newHtml) => {
   font-weight: 500; /* 增加字重 */
   border: none;
   outline: none;
-  color: #555;
+  color: var(--neu-text-color);
   border-radius: 0.75rem; /* 增大圆角半径 */
   background-color: var(--neu-background);
+  background-image: var(--neu-background-gradient);
   box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
-  transition: all 0.2s ease;
+  transition: all var(--transition-time) ease;
+  border: 1px solid var(--neu-border-color);
   margin-left: 0.75rem; /* 增加按钮间距 */
   min-width: 6rem; /* 增加最小宽度，使按钮更长 */
   white-space: nowrap; /* 防止文本换行 */
@@ -155,13 +157,13 @@ watch(() => props.html, (newHtml) => {
 .theme-toggle:hover {
   transform: translateY(-1px);
   box-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light);
-  color: #333; /* 深色文字，增强对比度 */
+  color: var(--neu-primary-color); /* 使用主题主色 */
 }
 
 .theme-toggle:active {
   transform: translateY(0);
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
-  color: #333; /* 深色文字，增强对比度 */
+  color: var(--neu-primary-color); /* 使用主题主色 */
 }
 
 .theme-toggle > * {
@@ -182,7 +184,8 @@ watch(() => props.html, (newHtml) => {
   border-radius: 0.5rem; /* 统一圆角大小 */
   background-color: #ffffff;
   box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.1), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
-  transition: background-color 0.3s ease;
+  transition: all var(--transition-time) ease;
+  border: 1px solid var(--neu-border-color);
   position: relative;
   width: calc(100% - 0px); /* 确保宽度与分隔条一致 */
 }
@@ -190,6 +193,7 @@ watch(() => props.html, (newHtml) => {
 .preview-dark {
   background-color: #1a1a1a;
   box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(50, 50, 50, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .preview-frame {

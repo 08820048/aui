@@ -40,17 +40,19 @@ const iconMap = {
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
   cursor: pointer;
-  color: #555;
+  color: var(--neu-text-color);
   background-color: var(--neu-background);
+  background-image: var(--neu-background-gradient);
   box-shadow: 3px 3px 7px var(--neu-shadow-dark), -3px -3px 7px var(--neu-shadow-light);
   margin-bottom: 0.75rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-time) ease;
+  border: 1px solid var(--neu-border-color);
 }
 
 .menu-item:hover {
   transform: translateY(-2px);
   box-shadow: 4px 4px 8px var(--neu-shadow-dark), -4px -4px 8px var(--neu-shadow-light);
-  color: #333;
+  color: var(--neu-primary-color);
 }
 
 .menu-item:active {
@@ -60,8 +62,9 @@ const iconMap = {
 
 .menu-item-active {
   box-shadow: inset 3px 3px 7px var(--neu-shadow-dark), inset -3px -3px 7px var(--neu-shadow-light);
-  color: #333;
+  color: var(--neu-primary-color);
   transform: translateY(0);
+  font-weight: 500;
 }
 
 .menu-item-collapsed {
