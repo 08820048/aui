@@ -1,0 +1,57 @@
+:root {
+  --neu-background: #e0e0e0;
+  --neu-shadow-dark: #bebebe;
+  --neu-shadow-light: #ffffff;
+  font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #333;
+  background-color: var(--neu-background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Neumorphism utility classes */
+.neu-flat {
+  background-color: var(--neu-background);
+  border-radius: 0.75rem;
+  box-shadow: 5px 5px 10px var(--neu-shadow-dark), -5px -5px 10px var(--neu-shadow-light);
+}
+
+.neu-pressed {
+  background-color: var(--neu-background);
+  border-radius: 0.75rem;
+  box-shadow: inset 5px 5px 10px var(--neu-shadow-dark), inset -5px -5px 10px var(--neu-shadow-light);
+}
+
+.neu-flat-sm {
+  background-color: var(--neu-background);
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+}
+
+.neu-pressed-sm {
+  background-color: var(--neu-background);
+  border-radius: 0.5rem;
+  box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
+}
+
+.transition-300 {
+  transition: all 0.3s ease-in-out;
+}

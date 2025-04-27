@@ -1,0 +1,145 @@
+<script setup>
+import { ref } from 'vue';
+import SidebarToggle from './SidebarToggle.vue';
+import SidebarMenu from './SidebarMenu.vue';
+
+// 接收父组件传递的属性
+const props = defineProps({
+  isCollapsed: {
+    type: Boolean,
+    default: false
+  }
+});
+
+// 定义事件
+const emit = defineEmits(['toggle']);
+
+// 切换侧边栏状态
+const toggleSidebar = () => {
+  emit('toggle');
+};
+
+// 菜单项数据
+const menuItems = ref([
+  {
+    id: 1,
+    title: '网页美化',
+    icon: 'code',
+    active: true
+  },
+  {
+    id: 2,
+    title: '文件上传',
+    icon: 'upload',
+    active: false
+  },
+  {
+    id: 3,
+    title: '风格选择',
+    icon: 'palette',
+    active: false
+  },
+  {
+    id: 4,
+    title: '设置',
+    icon: 'settings',
+    active: false
+  }
+]);
+
+// 激活菜单项
+const activateMenuItem = (id) => {
+  menuItems.value.forEach(item => {
+    item.active = item.id === id;
+  });
+};
+</script>
+
+<template>
+  <aside
+    class="sidebar neu-flat transition-300"
+    :class="{ 'sidebar-collapsed': isCollapsed }"
+  >
+    <!-- 侧边栏头部 -->
+    <div class="sidebar-header">
+      <h1 class="sidebar-title" v-if="!isCollapsed">网页美化工具</h1>
+      <div class="sidebar-logo" v-else>WB</div>
+      <SidebarToggle
+        :is-collapsed="isCollapsed"
+        @toggle="toggleSidebar"
+      />
+    </div>
+
+    <!-- 侧边栏菜单 -->
+    <SidebarMenu
+      :items="menuItems"
+      :is-collapsed="isCollapsed"
+      @activate="activateMenuItem"
+    />
+
+    <!-- 侧边栏底部 -->
+    <div class="sidebar-footer">
+      <p v-if="!isCollapsed">拟态风格 v1.0</p>
+      <p v-else>v1.0</p>
+    </div>
+  </aside>
+</template>
+
+<style scoped>
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  padding: 1.5rem 1rem;
+  transition: all 0.3s ease;
+  background-color: var(--neu-background);
+  box-shadow: 5px 5px 15px var(--neu-shadow-dark), -5px -5px 15px var(--neu-shadow-light);
+  border-radius: 0 0.5rem 0.5rem 0; /* 统一圆角大小 */
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  height: calc(100% - 1rem);
+}
+
+.sidebar-collapsed {
+  width: 72px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
+}
+
+.sidebar-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+}
+
+.sidebar-logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+</style>
