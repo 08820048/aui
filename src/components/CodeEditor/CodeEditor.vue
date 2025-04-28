@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { highlightCode } from '../../utils/highlighter';
 import CodeHighlight from './CodeHighlight.vue';
+import StyleDialog from '../StyleSelector/StyleDialog.vue';
 
 // 接收父组件传递的属性
 const props = defineProps({
@@ -12,13 +13,32 @@ const props = defineProps({
 });
 
 // 定义事件
-const emit = defineEmits(['update:modelValue', 'beautify']);
+const emit = defineEmits(['update:modelValue', 'beautify', 'styleChange']);
 
 // 本地代码内容
 const localCode = ref(props.modelValue);
 
 // 当前激活的标签页（编辑/预览）
 const activeTab = ref('edit');
+
+// 风格选择对话框状态
+const styleDialogVisible = ref(false);
+
+// 打开风格选择对话框
+const openStyleDialog = () => {
+  styleDialogVisible.value = true;
+};
+
+// 关闭风格选择对话框
+const closeStyleDialog = () => {
+  styleDialogVisible.value = false;
+};
+
+// 确认选择风格并美化代码
+const confirmStyle = (data) => {
+  emit('beautify', data);
+  closeStyleDialog();
+};
 
 // 监听父组件传递的值变化
 watch(() => props.modelValue, (newValue) => {
@@ -31,9 +51,15 @@ const updateCode = (event) => {
   emit('update:modelValue', localCode.value);
 };
 
-// 美化代码
+// 美化代码 - 打开风格选择对话框
 const beautifyCode = () => {
-  emit('beautify');
+  // 如果代码为空，不打开对话框
+  if (!localCode.value.trim()) {
+    return;
+  }
+
+  // 打开风格选择对话框
+  openStyleDialog();
 };
 
 // 示例代码
@@ -129,6 +155,14 @@ const clearCode = () => {
       </div>
     </div>
 
+    <!-- 风格选择对话框 -->
+    <StyleDialog
+      :visible="styleDialogVisible"
+      :code="localCode"
+      @close="closeStyleDialog"
+      @confirm="confirmStyle"
+    />
+
     <div class="editor-content neu-pressed">
       <div class="editor-tabs">
         <button
@@ -164,6 +198,7 @@ const clearCode = () => {
 </template>
 
 <style scoped>
+
 .code-editor-container {
   display: flex;
   flex-direction: column;

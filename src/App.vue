@@ -17,6 +17,9 @@ const toggleSidebar = () => {
 const htmlCode = ref('');
 const beautifiedHtml = ref('');
 
+// 当前选中的风格
+const currentStyle = ref(null);
+
 // 分割区域高度比例
 const splitRatio = ref(0.5);
 const updateSplitRatio = (newRatio) => {
@@ -24,28 +27,45 @@ const updateSplitRatio = (newRatio) => {
 };
 
 // 美化代码
-const beautifyCode = async () => {
+const beautifyCode = async (data) => {
   try {
     // 如果代码为空，直接返回
-    if (!htmlCode.value.trim()) {
+    if (!data.code.trim()) {
       beautifiedHtml.value = '';
       return;
     }
 
+    // 记录当前选中的风格
+    currentStyle.value = data.style;
+
+    // 这里是实际调用后端API的地方
+    // 在实际项目中，这里应该是一个真实的API端点
+    // 目前为了演示，我们只是简单地返回原始代码
+
+    // 模拟API调用
+    /*
     const response = await fetch('http://127.0.0.1:3000/api/code/beautify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ code: htmlCode.value }),
+      body: JSON.stringify({
+        code: data.code,
+        style: data.style
+      }),
     });
 
     if (!response.ok) {
       throw new Error('网络请求失败');
     }
 
-    const data = await response.json();
-    beautifiedHtml.value = data.beautifiedCode || htmlCode.value;
+    const result = await response.json();
+    beautifiedHtml.value = result.beautifiedCode || htmlCode.value;
+    */
+
+    // 模拟美化结果 - 在实际项目中，这里应该是API返回的结果
+    console.log(`美化代码，风格: ${data.style}`);
+    beautifiedHtml.value = data.code;
   } catch (error) {
     console.error('美化代码失败:', error);
     // 如果API不可用，至少显示原始代码
@@ -125,6 +145,7 @@ const handleResize = () => {
           <CodeEditor
             v-model="htmlCode"
             @beautify="beautifyCode"
+            @styleChange="style => currentStyle = style"
           />
         </div>
 
