@@ -281,6 +281,22 @@ watch(() => props.html, (newHtml) => {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* 暗色主题下的复制按钮 */
+.theme-dark-frost .copy-button {
+  background-color: rgba(0, 188, 212, 0.2);
+  color: #e0e0e0;
+  border: 1px solid rgba(0, 188, 212, 0.3);
+}
+
+.theme-dark-frost .copy-button:hover {
+  background-color: rgba(0, 188, 212, 0.3);
+}
+
+.theme-dark-frost .copy-button.copied {
+  background-color: #00bcd4;
+  color: #ffffff;
+}
+
 .preview-frame {
   width: 100%;
   height: 100%;
