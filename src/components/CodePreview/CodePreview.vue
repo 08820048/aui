@@ -42,7 +42,7 @@ watch(() => props.html, (newHtml) => {
 <template>
   <div class="preview-container">
     <div class="preview-header">
-      <h2 class="preview-title">实时预览</h2>
+      <h2 class="preview-title">预览区</h2>
       <div class="preview-actions">
         <button
           class="theme-toggle neu-flat-sm"

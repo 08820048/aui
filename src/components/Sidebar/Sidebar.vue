@@ -63,8 +63,8 @@ const activateMenuItem = (id) => {
     <!-- 侧边栏头部 -->
     <div class="sidebar-header" :class="{ 'sidebar-header-collapsed': isCollapsed }">
       <div class="title-container">
-        <h1 class="sidebar-title" v-if="!isCollapsed">网页美化工具</h1>
-        <div class="sidebar-logo" v-else>WB</div>
+        <h1 class="sidebar-title" v-if="!isCollapsed">LumaCraft</h1>
+        <div class="sidebar-logo" v-else>LC</div>
       </div>
       <SidebarToggle
         :is-collapsed="isCollapsed"
@@ -82,7 +82,7 @@ const activateMenuItem = (id) => {
 
     <!-- 侧边栏底部 -->
     <div class="sidebar-footer">
-      <p v-if="!isCollapsed">拟态风格 v1.0</p>
+      <p v-if="!isCollapsed">LumaCraft_v1.0</p>
       <p v-else>v1.0</p>
     </div>
   </aside>

@@ -84,7 +84,7 @@ const clearCode = () => {
 <template>
   <div class="code-editor-container">
     <div class="editor-header">
-      <h2 class="editor-title">HTML 代码输入</h2>
+      <h2 class="editor-title">编辑区</h2>
       <div class="editor-actions">
         <button
           class="action-btn neu-flat-sm"
