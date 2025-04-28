@@ -5,6 +5,7 @@ import CodeEditor from './components/CodeEditor/CodeEditor.vue';
 import CodePreview from './components/CodePreview/CodePreview.vue';
 import Resizer from './components/Resizer/Resizer.vue';
 import ThemeSwitcher from './components/ThemeSwitcher/ThemeSwitcher.vue';
+import Particles from './components/Effects/Particles.vue';
 
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
@@ -67,9 +68,27 @@ const togglePreviewTheme = () => {
   isDarkPreview.value = !isDarkPreview.value;
 };
 
+// 当前主题
+const currentTheme = ref('');
+
+// 监听主题变化
+const updateTheme = () => {
+  // 从 localStorage 获取当前主题
+  const theme = localStorage.getItem('selected-theme') || 'default';
+  currentTheme.value = theme;
+};
+
 // 窗口调整时确保布局正确
 onMounted(() => {
   window.addEventListener('resize', handleResize);
+  updateTheme();
+
+  // 监听主题变化事件
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'selected-theme') {
+      updateTheme();
+    }
+  });
 });
 
 const handleResize = () => {
@@ -82,6 +101,8 @@ const handleResize = () => {
 
 <template>
   <div class="app-container transition-500">
+    <!-- 粒子效果 -->
+    <Particles :theme="currentTheme" />
     <!-- 侧边栏 -->
     <Sidebar
       :is-collapsed="isSidebarCollapsed"

@@ -80,6 +80,30 @@
   --neu-background-gradient: linear-gradient(135deg, rgba(196, 113, 237, 0.3), rgba(246, 79, 89, 0.3));
 }
 
+/* 未来流光科技风 */
+.theme-future-glow {
+  /* 背景和容器 */
+  --neu-background: rgba(255, 255, 255, 0.05);
+  --neu-shadow-dark: rgba(0, 0, 0, 0.3);
+  --neu-shadow-light: rgba(255, 255, 255, 0.05);
+  --neu-primary-color: #00D1FF;
+  --neu-primary-color-rgb: 0, 209, 255;
+  --neu-text-color: #D0D0D0;
+  --neu-border-color: rgba(255, 255, 255, 0.1);
+  --neu-background-opacity: 0.95;
+  --neu-background-gradient: linear-gradient(135deg, #0e0e12, #1a1f27);
+
+  /* 按钮渐变和发光效果 */
+  --future-button-gradient: linear-gradient(135deg, #00FFA3, #00D1FF);
+  --future-button-hover-shadow: 0 0 20px rgba(0, 255, 163, 0.4);
+  --future-title-color: #FFFFFF;
+  --future-text-color: #D0D0D0;
+
+  /* 光流动画相关变量 */
+  --future-glow-animation: flowingLight 15s infinite linear;
+  --future-glow-opacity: 0.1;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -169,4 +193,98 @@ body {
   background-image: var(--neu-background-gradient);
   border: 1px solid var(--neu-border-color);
   transition: all var(--transition-time) ease;
+}
+
+/* 未来流光科技风特效 */
+@keyframes flowingLight {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 未来流光科技风按钮样式 */
+.theme-future-glow .action-btn,
+.theme-future-glow .theme-toggle-btn,
+.theme-future-glow .toggle-btn,
+.theme-future-glow .editor-tab.active,
+.theme-future-glow .preview-tab.active {
+  background-image: var(--future-button-gradient);
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 209, 255, 0.2);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.theme-future-glow .action-btn:hover,
+.theme-future-glow .theme-toggle-btn:hover,
+.theme-future-glow .toggle-btn:hover {
+  box-shadow: var(--future-button-hover-shadow);
+  transform: translateY(-2px);
+}
+
+/* 未来流光科技风标题样式 */
+.theme-future-glow .sidebar-title,
+.theme-future-glow .editor-title,
+.theme-future-glow .preview-title {
+  color: var(--future-title-color);
+  text-shadow: 0 0 10px rgba(0, 209, 255, 0.3);
+}
+
+/* 未来流光科技风光流背景 */
+.theme-future-glow::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #00FFA3, #00D1FF, #00FFA3);
+  background-size: 400% 400%;
+  opacity: var(--future-glow-opacity);
+  z-index: -1;
+  animation: var(--future-glow-animation);
+  pointer-events: none;
+}
+
+/* 未来流光科技风容器样式 */
+.theme-future-glow .sidebar,
+.theme-future-glow .content-wrapper,
+.theme-future-glow .editor-content,
+.theme-future-glow .preview-content,
+.theme-future-glow .code-highlight-container,
+.theme-future-glow .theme-menu {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--neu-border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 未来流光科技风菜单项样式 */
+.theme-future-glow .menu-item {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--neu-border-color);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.theme-future-glow .menu-item:hover,
+.theme-future-glow .menu-item-active {
+  background-image: linear-gradient(rgba(0, 209, 255, 0.1), rgba(0, 255, 163, 0.1));
+  box-shadow: 0 0 15px rgba(0, 209, 255, 0.3);
+  border: 1px solid rgba(0, 209, 255, 0.3);
+}
+
+/* 粒子效果 */
+.theme-future-glow .particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
 }
