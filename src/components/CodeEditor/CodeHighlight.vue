@@ -78,12 +78,12 @@ onMounted(() => {
       :class="{ 'copied': isCopied }"
     >
       <!-- 复制图标 -->
-      <svg v-if="!isCopied" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg v-if="!isCopied" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
       </svg>
       <!-- 复制成功图标 -->
-      <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="20 6 9 17 4 12"></polyline>
       </svg>
       <span>{{ isCopied ? '已复制' : '复制' }}</span>
@@ -106,28 +106,29 @@ onMounted(() => {
 
 .copy-button {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.5rem;
+  right: 1.5rem; /* 增加与右边的距离，避开滚动条 */
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.25rem;
-  padding: 0.4rem 0.75rem;
+  padding: 0.35rem 0.6rem; /* 减小内边距，使按钮更紧凑 */
   background-color: var(--neu-background);
   border: 1px solid var(--neu-border-color);
-  border-radius: 0.375rem;
+  border-radius: 0.5rem; /* 增大圆角半径 */
   color: var(--neu-text-color);
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* 减小字体大小 */
   cursor: pointer;
   z-index: 10;
-  opacity: 0.9;
+  opacity: 0.85; /* 降低默认透明度 */
   transition: all 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* 增强阴影 */
 }
 
 .copy-button:hover {
   opacity: 1;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* 增强阴影 */
 }
 
 .copy-button.copied {
@@ -212,7 +213,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 1rem;
+  padding: 1rem 1.5rem 1rem 1rem; /* 增加右侧内边距，为复制按钮留出空间 */
   background-color: transparent !important;
   border-radius: 0.5rem;
   overflow: auto;
