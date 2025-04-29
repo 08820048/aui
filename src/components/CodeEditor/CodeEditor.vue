@@ -9,6 +9,18 @@ const props = defineProps({
   modelValue: {
     type: String,
     default: ''
+  },
+  beautifyLoading: {
+    type: Boolean,
+    default: false
+  },
+  beautifyError: {
+    type: String,
+    default: ''
+  },
+  beautifySuccess: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -53,12 +65,9 @@ const updateCode = (event) => {
 
 // 美化代码 - 打开风格选择对话框
 const beautifyCode = () => {
-  // 如果代码为空，不打开对话框
   if (!localCode.value.trim()) {
     return;
   }
-
-  // 打开风格选择对话框
   openStyleDialog();
 };
 
@@ -143,6 +152,7 @@ const clearCode = () => {
         <button
           class="action-btn neu-flat-sm"
           @click="beautifyCode"
+          :disabled="props.beautifyLoading"
           title="美化代码"
           style="height: 28px; font-size: 12px; padding: 4px 10px;"
         >
@@ -150,7 +160,7 @@ const clearCode = () => {
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
           </svg>
-          <span style="margin-left: 4px;">开始美化</span>
+          <span style="margin-left: 4px;">{{ props.beautifyLoading ? '美化中...' : '开始美化' }}</span>
         </button>
       </div>
     </div>
@@ -195,10 +205,16 @@ const clearCode = () => {
       </div>
     </div>
   </div>
+
+  <!-- 轻提示 -->
+  <transition name="fade">
+    <div v-if="props.beautifyLoading" class="beautify-toast">正在美化，请稍候...</div>
+    <div v-else-if="props.beautifyError" class="beautify-toast error">{{ props.beautifyError }}</div>
+    <div v-else-if="props.beautifySuccess" class="beautify-toast success">美化完成！</div>
+  </transition>
 </template>
 
 <style scoped>
-
 .code-editor-container {
   display: flex;
   flex-direction: column;
@@ -366,5 +382,44 @@ const clearCode = () => {
   background: transparent;
   border-radius: 0.5rem;
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
+}
+
+.beautify-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(60, 60, 60, 0.96);
+  color: #fff;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  z-index: 9999;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  pointer-events: none;
+  animation: fadeIn .2s;
+}
+
+.beautify-toast.error {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.beautify-toast.success {
+  background: #43a047;
+  color: #fff;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 </style>

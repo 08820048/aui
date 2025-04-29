@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import Sidebar from './components/Sidebar/Sidebar.vue';
 import CodeEditor from './components/CodeEditor/CodeEditor.vue';
 import CodePreview from './components/CodePreview/CodePreview.vue';
 import Resizer from './components/Resizer/Resizer.vue';
 import ThemeSwitcher from './components/ThemeSwitcher/ThemeSwitcher.vue';
 import Particles from './components/Effects/Particles.vue';
+import { beautifyHtml, beautifyHtmlStream } from './api/beautify';
 
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
@@ -26,54 +27,47 @@ const updateSplitRatio = (newRatio) => {
   splitRatio.value = newRatio;
 };
 
-// 美化代码
+// 预览区域主题
+const isDarkPreview = ref(false);
+const togglePreviewTheme = () => {
+  isDarkPreview.value = !isDarkPreview.value;
+};
+
+// 美化状态
+const beautifyLoading = ref(false);
+const beautifyError = ref('');
+const beautifySuccess = ref(false);
+
+// 请求美化网页（流式）
 const beautifyCode = async (data) => {
+  beautifyLoading.value = true;
+  beautifyError.value = '';
+  beautifySuccess.value = false;
+  beautifiedHtml.value = '';
   try {
-    // 如果代码为空，直接返回
-    if (!data.code.trim()) {
-      beautifiedHtml.value = '';
-      return;
-    }
-
-    // 记录当前选中的风格
-    currentStyle.value = data.style;
-
-    // 这里是实际调用后端API的地方
-    // 在实际项目中，这里应该是一个真实的API端点
-    // 目前为了演示，我们只是简单地返回原始代码
-
-    // 模拟API调用
-    /*
-    const response = await fetch('http://127.0.0.1:3000/api/code/beautify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code: data.code,
-        style: data.style
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('网络请求失败');
-    }
-
-    const result = await response.json();
-    beautifiedHtml.value = result.beautifiedCode || htmlCode.value;
-    */
-
-    // 模拟美化结果 - 在实际项目中，这里应该是API返回的结果
-    console.log(`美化代码，风格: ${data.style}`);
-    beautifiedHtml.value = data.code;
+    await beautifyHtmlStream(
+      { html_code: data.code, style: data.style },
+      {
+        onContent: (chunk) => {
+          // 逐步追加到已美化内容，实现逐字刷出
+          beautifiedHtml.value += chunk;
+        },
+        onDone: () => {
+          beautifyLoading.value = false;
+          beautifySuccess.value = true;
+        },
+        onError: (msg) => {
+          beautifyLoading.value = false;
+          beautifyError.value = msg || '美化失败';
+        },
+      }
+    );
   } catch (error) {
-    console.error('美化代码失败:', error);
-    // 如果API不可用，至少显示原始代码
-    beautifiedHtml.value = htmlCode.value;
+    beautifyLoading.value = false;
+    beautifyError.value = error?.message || '美化失败';
   }
 };
 
-// 监听代码变化，自动更新预览
 watch(htmlCode, (newCode) => {
   if (newCode.trim()) {
     beautifiedHtml.value = newCode;
@@ -81,48 +75,12 @@ watch(htmlCode, (newCode) => {
     beautifiedHtml.value = '';
   }
 });
-
-// 预览区域背景颜色
-const isDarkPreview = ref(false);
-const togglePreviewTheme = () => {
-  isDarkPreview.value = !isDarkPreview.value;
-};
-
-// 当前主题
-const currentTheme = ref('');
-
-// 监听主题变化
-const updateTheme = () => {
-  // 从 localStorage 获取当前主题
-  const theme = localStorage.getItem('selected-theme') || 'default';
-  currentTheme.value = theme;
-};
-
-// 窗口调整时确保布局正确
-onMounted(() => {
-  window.addEventListener('resize', handleResize);
-  updateTheme();
-
-  // 监听主题变化事件
-  window.addEventListener('storage', (event) => {
-    if (event.key === 'selected-theme') {
-      updateTheme();
-    }
-  });
-});
-
-const handleResize = () => {
-  // 如果窗口高度过小，调整分割比例
-  if (window.innerHeight < 600 && splitRatio.value > 0.6) {
-    splitRatio.value = 0.6;
-  }
-};
 </script>
 
 <template>
   <div class="app-container transition-500">
     <!-- 粒子效果 -->
-    <Particles :theme="currentTheme" />
+    <Particles />
     <!-- 侧边栏 -->
     <Sidebar
       :is-collapsed="isSidebarCollapsed"
@@ -144,6 +102,9 @@ const handleResize = () => {
         <div class="editor-section" :style="{ height: `${splitRatio * 100}%` }">
           <CodeEditor
             v-model="htmlCode"
+            :beautify-loading="beautifyLoading"
+            :beautify-error="beautifyError"
+            :beautify-success="beautifySuccess"
             @beautify="beautifyCode"
             @styleChange="style => currentStyle = style"
           />
@@ -164,6 +125,7 @@ const handleResize = () => {
           <CodePreview
             :html="beautifiedHtml"
             :is-dark="isDarkPreview"
+            :beautify-loading="beautifyLoading"
             @toggle-theme="togglePreviewTheme"
           />
         </div>
@@ -194,13 +156,13 @@ const handleResize = () => {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  margin-left: 256px; /* 240px + 16px gap */
+  margin-left: 256px; 
   transition: all 0.3s ease-in-out;
-  padding: 1.25rem 1.5rem 1.5rem 1.5rem; /* 增加内边距，特别是左右内边距 */
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem; 
 }
 
 .main-content-expanded {
-  margin-left: 88px; /* 72px + 16px gap */
+  margin-left: 88px; 
 }
 
 .content-wrapper {
@@ -209,25 +171,25 @@ const handleResize = () => {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  border-radius: 0.5rem; /* 统一圆角大小 */
+  border-radius: 0.5rem; 
   box-shadow: 5px 5px 15px var(--neu-shadow-dark), -5px -5px 15px var(--neu-shadow-light);
-  position: relative; /* 添加相对定位，作为分隔条的定位参考 */
-  margin-left: 0.5rem; /* 添加左边距，增加与左侧菜单栏的间距 */
+  position: relative; 
+  margin-left: 0.5rem; 
 }
 
 .resizer-container {
   width: 100%;
-  overflow: visible; /* 允许内容可见 */
+  overflow: visible; 
   position: relative;
-  z-index: 15; /* 提高层级 */
+  z-index: 15; 
   height: 8px;
   margin: 0;
   padding: 0;
-  user-select: none; /* 防止文本选中 */
-  touch-action: none; /* 防止触摸事件 */
-  display: flex; /* 使用弹性盒子布局 */
-  justify-content: center; /* 水平居中 */
-  align-items: center; /* 垂直居中 */
+  user-select: none; 
+  touch-action: none; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
 }
 
 .editor-section, .preview-section {
@@ -235,7 +197,7 @@ const handleResize = () => {
   width: 100%;
   overflow: hidden;
   transition: height 0.1s ease-out;
-  box-sizing: border-box; /* 确保内边距不会增加元素宽度 */
+  box-sizing: border-box; 
 }
 
 .editor-section {

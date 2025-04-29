@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onBeforeUnmount } from 'vue';
 import CodeHighlight from '../CodeEditor/CodeHighlight.vue'; // 你的代码高亮组件
 
 // 接收父组件传来的html内容和暗黑模式开关
@@ -11,6 +11,10 @@ const props = defineProps({
   isDark: {
     type: Boolean,
     default: false
+  },
+  beautifyLoading: { 
+    type: Boolean, 
+    default: false 
   }
 });
 
@@ -23,10 +27,51 @@ const previewFrame = ref(null);
 // 当前选中的tab
 const activeTab = ref('render');
 
-// 主题切换按钮
-const toggleTheme = () => {
-  emit('toggle-theme');
-};
+// 打字机式高亮显示
+const displayedCode = ref('');
+let typingTimer = null;
+
+watch(
+  () => props.html,
+  (newVal, oldVal) => {
+    if (props.beautifyLoading) {
+      clearInterval(typingTimer);
+      let i = oldVal ? oldVal.length : 0;
+      typingTimer = setInterval(() => {
+        if (i < newVal.length) {
+          displayedCode.value = newVal.slice(0, i + 1);
+          i++;
+        } else {
+          clearInterval(typingTimer);
+        }
+      }, 8); // 可调速度
+    } else {
+      displayedCode.value = newVal || '';
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.beautifyLoading,
+  (loading) => {
+    if (!loading) {
+      clearInterval(typingTimer);
+      displayedCode.value = props.html || '';
+    }
+  }
+);
+
+onBeforeUnmount(() => {
+  clearInterval(typingTimer);
+});
+
+// 流式美化时自动切到代码高亮tab
+watch(() => props.beautifyLoading, (loading) => {
+  if (loading) {
+    activeTab.value = 'code';
+  }
+});
 
 // 监听html变化，动态刷新iframe内容
 watch(() => props.html, (newHtml) => {
@@ -45,7 +90,7 @@ watch(() => props.html, (newHtml) => {
       <div class="preview-actions">
         <button
             class="theme-toggle neu-flat-sm"
-            @click="toggleTheme"
+            @click="() => emit('toggle-theme')"
             :title="isDark ? '切换为浅色主题' : '切换为深色主题'"
         >
           <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
@@ -73,6 +118,7 @@ watch(() => props.html, (newHtml) => {
           class="preview-tab"
           :class="{ 'active': activeTab === 'render' }"
           @click="activeTab = 'render'"
+          :disabled="props.beautifyLoading"
       >
         渲染结果
       </button>
@@ -80,6 +126,7 @@ watch(() => props.html, (newHtml) => {
           class="preview-tab"
           :class="{ 'active': activeTab === 'code' }"
           @click="activeTab = 'code'"
+          :disabled="props.beautifyLoading"
       >
         代码高亮
       </button>
@@ -100,8 +147,9 @@ watch(() => props.html, (newHtml) => {
         ></iframe>
       </div>
 
-      <div v-show="activeTab === 'code'" class="code-highlight-container neu-pressed">
-        <CodeHighlight :code="html" language="html" />
+      <div v-show="activeTab === 'code'" class="code-highlight-container neu-pressed" style="position:relative;">
+        <CodeHighlight :code="displayedCode" language="html" />
+        <div v-if="props.beautifyLoading" class="stream-loading">代码生成中...</div>
       </div>
     </div>
   </div>
@@ -252,5 +300,15 @@ watch(() => props.html, (newHtml) => {
   background-color: #fff;
   border: 1px solid var(--neu-border-color);
   border-radius: 0.5rem;
+}
+
+.stream-loading {
+  position: absolute;
+  top: 12px;
+  right: 24px;
+  color: #888;
+  font-size: 13px;
+  z-index: 2;
+  pointer-events: none;
 }
 </style>
