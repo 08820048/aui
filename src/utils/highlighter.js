@@ -2,7 +2,8 @@ import hljs from 'highlight.js/lib/core';
 import xml from 'highlight.js/lib/languages/xml';
 import css from 'highlight.js/lib/languages/css';
 import javascript from 'highlight.js/lib/languages/javascript';
-import 'highlight.js/styles/atom-one-light.css';
+// 使用自定义样式，不再导入预设样式
+// import 'highlight.js/styles/atom-one-light.css';
 
 // 注册需要的语言
 hljs.registerLanguage('xml', xml);
@@ -13,7 +14,7 @@ hljs.registerLanguage('javascript', javascript);
 // 高亮函数
 export const highlightCode = (code, language = 'html') => {
   if (!code) return '';
-  
+
   try {
     if (language) {
       return hljs.highlight(code, { language }).value;
@@ -31,7 +32,7 @@ export const highlightDirective = {
   mounted(el, binding) {
     const code = binding.value || el.textContent;
     const language = binding.arg || 'html';
-    
+
     if (code) {
       el.innerHTML = highlightCode(code, language);
       el.classList.add('hljs');
@@ -40,7 +41,7 @@ export const highlightDirective = {
   updated(el, binding) {
     const code = binding.value || el.textContent;
     const language = binding.arg || 'html';
-    
+
     if (code) {
       el.innerHTML = highlightCode(code, language);
       el.classList.add('hljs');

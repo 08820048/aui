@@ -3,8 +3,8 @@ import './style.css'
 import App from './App.vue'
 import highlightPlugin from './utils/highlighter'
 
-// 导入highlight.js样式
-import 'highlight.js/styles/atom-one-light.css'
+// 导入自定义高亮样式
+import './styles/custom-highlight.css'
 
 const app = createApp(App)
 

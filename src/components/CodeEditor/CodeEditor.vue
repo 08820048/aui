@@ -153,14 +153,27 @@ const clearCode = () => {
           class="action-btn neu-flat-sm"
           @click="beautifyCode"
           :disabled="props.beautifyLoading"
+          :class="{ 'loading': props.beautifyLoading, 'error': props.beautifyError }"
           title="美化代码"
           style="height: 28px; font-size: 12px; padding: 4px 10px;"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg v-if="!props.beautifyLoading && !props.beautifyError" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
           </svg>
-          <span style="margin-left: 4px;">{{ props.beautifyLoading ? '美化中...' : '开始美化' }}</span>
+          <svg v-else-if="props.beautifyError" xmlns="http://www.w3.org/2000/svg" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          <span v-else class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span style="margin-left: 4px;">
+            {{ props.beautifyLoading ? '美化中...' : props.beautifyError ? '已终止' : '开始美化' }}
+          </span>
         </button>
       </div>
     </div>
@@ -209,7 +222,8 @@ const clearCode = () => {
   <!-- 轻提示 -->
   <transition name="fade">
     <div v-if="props.beautifyLoading" class="beautify-toast">正在美化，请稍候...</div>
-    <div v-else-if="props.beautifyError" class="beautify-toast error">{{ props.beautifyError }}</div>
+    <div v-else-if="props.beautifyError && props.beautifyError !== '用户终止了美化'" class="beautify-toast error">{{ props.beautifyError }}</div>
+    <div v-else-if="props.beautifyError === '用户终止了美化'" class="beautify-toast warning">用户终止了美化</div>
     <div v-else-if="props.beautifySuccess" class="beautify-toast success">美化完成！</div>
   </transition>
 </template>
@@ -298,6 +312,51 @@ const clearCode = () => {
   transform: translateY(0);
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
   color: var(--neu-primary-color); /* 使用主题主色 */
+}
+
+.action-btn.loading {
+  background-color: rgba(var(--neu-primary-color-rgb), 0.1);
+  color: var(--neu-primary-color);
+}
+
+.action-btn.error {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+}
+
+.loading-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 14px;
+  width: 14px;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--neu-primary-color);
+  margin: 0 1px;
+  animation: loadingDots 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.0);
+  }
 }
 
 .action-btn > * {
@@ -389,25 +448,57 @@ const clearCode = () => {
   top: 80px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(60, 60, 60, 0.96);
+  background: rgba(60, 60, 60, 0.9);
   color: #fff;
   padding: 10px 28px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 15px;
   z-index: 9999;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   pointer-events: none;
-  animation: fadeIn .2s;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: toastIn 0.3s ease-in-out, toastOut 0.5s ease-in-out 2.5s forwards;
 }
 
 .beautify-toast.error {
-  background: #d32f2f;
+  background: rgba(211, 47, 47, 0.9);
   color: #fff;
+  box-shadow: 0 5px 20px rgba(211, 47, 47, 0.3);
+}
+
+.beautify-toast.warning {
+  background: rgba(255, 152, 0, 0.9);
+  color: #fff;
+  box-shadow: 0 5px 20px rgba(255, 152, 0, 0.3);
 }
 
 .beautify-toast.success {
-  background: #43a047;
+  background: rgba(67, 160, 71, 0.9);
   color: #fff;
+  box-shadow: 0 5px 20px rgba(67, 160, 71, 0.3);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
 }
 
 .fade-enter-active, .fade-leave-active {

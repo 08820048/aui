@@ -6,6 +6,7 @@ import CodePreview from './components/CodePreview/CodePreview.vue';
 import Resizer from './components/Resizer/Resizer.vue';
 import ThemeSwitcher from './components/ThemeSwitcher/ThemeSwitcher.vue';
 import Particles from './components/Effects/Particles.vue';
+import TypewriterModal from './components/Modal/TypewriterModal.vue';
 import { beautifyHtml, beautifyHtmlStream } from './api/beautify';
 
 // 侧边栏状态
@@ -38,16 +39,31 @@ const beautifyLoading = ref(false);
 const beautifyError = ref('');
 const beautifySuccess = ref(false);
 
+// 打字机模态框状态
+const typewriterModalVisible = ref(false);
+
+// 当前请求控制器
+let currentAbortController = null;
+
 // 请求美化网页（流式）
 const beautifyCode = async (data) => {
   beautifyLoading.value = true;
   beautifyError.value = '';
   beautifySuccess.value = false;
   beautifiedHtml.value = '';
+
+  // 创建新的中止控制器
+  currentAbortController = new AbortController();
+  const signal = currentAbortController.signal;
+
+  // 显示打字机模态框
+  typewriterModalVisible.value = true;
+
   try {
     await beautifyHtmlStream(
       { html_code: data.code, style: data.style },
       {
+        signal,
         onContent: (chunk) => {
           // 逐步追加到已美化内容，实现逐字刷出
           beautifiedHtml.value += chunk;
@@ -55,16 +71,52 @@ const beautifyCode = async (data) => {
         onDone: () => {
           beautifyLoading.value = false;
           beautifySuccess.value = true;
+          currentAbortController = null;
+
+          // 3秒后自动重置成功状态
+          setTimeout(() => {
+            beautifySuccess.value = false;
+          }, 3000);
         },
         onError: (msg) => {
           beautifyLoading.value = false;
           beautifyError.value = msg || '美化失败';
+          currentAbortController = null;
         },
       }
     );
   } catch (error) {
+    // 如果是用户主动取消，不显示错误
+    if (error.name === 'AbortError') {
+      beautifyError.value = '用户终止了美化';
+    } else {
+      beautifyError.value = error?.message || '美化失败';
+    }
     beautifyLoading.value = false;
-    beautifyError.value = error?.message || '美化失败';
+    currentAbortController = null;
+  }
+};
+
+// 关闭打字机模态框
+const closeTypewriterModal = () => {
+  typewriterModalVisible.value = false;
+};
+
+// 停止生成
+const stopBeautifyGeneration = () => {
+  if (currentAbortController) {
+    currentAbortController.abort();
+    currentAbortController = null;
+
+    // 立即更新状态，不等待错误回调
+    beautifyLoading.value = false;
+    beautifyError.value = '用户终止了美化';
+    beautifySuccess.value = false;
+
+    // 3秒后自动清除错误提示
+    setTimeout(() => {
+      beautifyError.value = '';
+    }, 3000);
   }
 };
 
@@ -131,6 +183,15 @@ watch(htmlCode, (newCode) => {
         </div>
       </div>
     </main>
+    <!-- 打字机模态框 -->
+    <TypewriterModal
+      :visible="typewriterModalVisible"
+      :code="beautifiedHtml"
+      :loading="beautifyLoading"
+      language="html"
+      @close="closeTypewriterModal"
+      @stop="stopBeautifyGeneration"
+    />
   </div>
 </template>
 
@@ -156,13 +217,13 @@ watch(htmlCode, (newCode) => {
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  margin-left: 256px; 
+  margin-left: 256px;
   transition: all 0.3s ease-in-out;
-  padding: 1.25rem 1.5rem 1.5rem 1.5rem; 
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
 }
 
 .main-content-expanded {
-  margin-left: 88px; 
+  margin-left: 88px;
 }
 
 .content-wrapper {
@@ -171,25 +232,25 @@ watch(htmlCode, (newCode) => {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  border-radius: 0.5rem; 
+  border-radius: 0.5rem;
   box-shadow: 5px 5px 15px var(--neu-shadow-dark), -5px -5px 15px var(--neu-shadow-light);
-  position: relative; 
-  margin-left: 0.5rem; 
+  position: relative;
+  margin-left: 0.5rem;
 }
 
 .resizer-container {
   width: 100%;
-  overflow: visible; 
+  overflow: visible;
   position: relative;
-  z-index: 15; 
+  z-index: 15;
   height: 8px;
   margin: 0;
   padding: 0;
-  user-select: none; 
-  touch-action: none; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
+  user-select: none;
+  touch-action: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .editor-section, .preview-section {
@@ -197,7 +258,7 @@ watch(htmlCode, (newCode) => {
   width: 100%;
   overflow: hidden;
   transition: height 0.1s ease-out;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .editor-section {

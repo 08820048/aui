@@ -1,0 +1,190 @@
+/* 自定义代码高亮样式 - 柔和现代风格 */
+
+/* 基础样式 */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #2c3e50;
+  background: transparent;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+}
+
+/* 注释 */
+.hljs-comment,
+.hljs-quote {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* 关键字 */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-addition {
+  color: #3498db;
+}
+
+/* 字符串 */
+.hljs-string,
+.hljs-doctag,
+.hljs-regexp {
+  color: #27ae60;
+}
+
+/* 数字 */
+.hljs-number,
+.hljs-literal {
+  color: #8e44ad;
+}
+
+/* 属性 */
+.hljs-attribute,
+.hljs-attr {
+  color: #e67e22;
+}
+
+/* 变量 */
+.hljs-variable,
+.hljs-template-variable {
+  color: #d35400;
+}
+
+/* 函数 */
+.hljs-function,
+.hljs-built_in {
+  color: #0097e6;
+}
+
+/* 标签 */
+.hljs-tag {
+  color: #3498db;
+}
+
+/* 标签名称 */
+.hljs-name {
+  color: #2980b9;
+  font-weight: 500;
+}
+
+/* 标签属性值 */
+.hljs-params {
+  color: #95a5a6;
+}
+
+/* 类型 */
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #e74c3c;
+}
+
+/* 符号 */
+.hljs-symbol,
+.hljs-bullet {
+  color: #f39c12;
+}
+
+/* 删除 */
+.hljs-deletion {
+  color: #c0392b;
+}
+
+/* 元信息 */
+.hljs-meta {
+  color: #16a085;
+}
+
+/* 链接 */
+.hljs-link {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+/* 强调 */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* 暗色主题适配 */
+.theme-dark-frost .hljs {
+  color: #ecf0f1;
+}
+
+.theme-dark-frost .hljs-comment,
+.theme-dark-frost .hljs-quote {
+  color: #95a5a6;
+}
+
+.theme-dark-frost .hljs-keyword,
+.theme-dark-frost .hljs-selector-tag,
+.theme-dark-frost .hljs-addition {
+  color: #3498db;
+}
+
+.theme-dark-frost .hljs-string,
+.theme-dark-frost .hljs-doctag,
+.theme-dark-frost .hljs-regexp {
+  color: #2ecc71;
+}
+
+.theme-dark-frost .hljs-number,
+.theme-dark-frost .hljs-literal {
+  color: #9b59b6;
+}
+
+.theme-dark-frost .hljs-attribute,
+.theme-dark-frost .hljs-attr {
+  color: #f39c12;
+}
+
+.theme-dark-frost .hljs-tag {
+  color: #3498db;
+}
+
+.theme-dark-frost .hljs-name {
+  color: #00bcd4;
+}
+
+/* 未来流光主题适配 */
+.theme-future-glow .hljs {
+  color: #ecf0f1;
+}
+
+.theme-future-glow .hljs-comment,
+.theme-future-glow .hljs-quote {
+  color: #7f8c8d;
+}
+
+.theme-future-glow .hljs-keyword,
+.theme-future-glow .hljs-selector-tag,
+.theme-future-glow .hljs-addition {
+  color: #00D1FF;
+}
+
+.theme-future-glow .hljs-string,
+.theme-future-glow .hljs-doctag,
+.theme-future-glow .hljs-regexp {
+  color: #00FFA3;
+}
+
+.theme-future-glow .hljs-number,
+.theme-future-glow .hljs-literal {
+  color: #9b59b6;
+}
+
+.theme-future-glow .hljs-attribute,
+.theme-future-glow .hljs-attr {
+  color: #f39c12;
+}
+
+.theme-future-glow .hljs-tag {
+  color: #00D1FF;
+}
+
+.theme-future-glow .hljs-name {
+  color: #00D1FF;
+  text-shadow: 0 0 5px rgba(0, 209, 255, 0.5);
+}
