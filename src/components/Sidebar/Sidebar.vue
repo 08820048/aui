@@ -62,10 +62,6 @@ const activateMenuItem = (id) => {
   >
     <!-- 侧边栏头部 -->
     <div class="sidebar-header" :class="{ 'sidebar-header-collapsed': isCollapsed }">
-      <div class="title-container">
-        <h1 class="sidebar-title" v-if="!isCollapsed">LumaCraft</h1>
-        <div class="sidebar-logo" v-else>LC</div>
-      </div>
       <SidebarToggle
         :is-collapsed="isCollapsed"
         @toggle="toggleSidebar"
@@ -91,9 +87,9 @@ const activateMenuItem = (id) => {
 <style scoped>
 .sidebar {
   position: fixed;
-  top: 1.25rem; /* 与右侧容器顶部对齐 */
+  top: 70px; /* 为顶部标题栏留出空间 */
   left: 1rem; /* 在左侧留出一定距离 */
-  height: calc(100% - 2.5rem); /* 与右侧容器高度一致 */
+  height: calc(100% - 80px); /* 调整高度以适应标题栏 */
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -117,25 +113,27 @@ const activateMenuItem = (id) => {
 .sidebar-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
+  justify-content: flex-end; /* 按钮靠右对齐 */
+  margin-bottom: 1.5rem;
   padding: 0 0.5rem;
   position: relative;
 }
 
 .sidebar-header-collapsed {
-  justify-content: center;
+  justify-content: center; /* 收起时按钮居中 */
   padding: 0;
 }
 
-.title-container {
-  display: flex;
-  align-items: center;
-}
+/* 已移除不需要的样式 */
 
 .toggle-button {
   position: relative;
   z-index: 5;
+  margin-right: 0.5rem; /* 展开时的右侧距离 */
+}
+
+.sidebar-header-collapsed .toggle-button {
+  margin-right: 0; /* 收起时去掉右侧距离 */
 }
 
 .sidebar-title {

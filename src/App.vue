@@ -133,6 +133,15 @@ watch(htmlCode, (newCode) => {
   <div class="app-container transition-500">
     <!-- 粒子效果 -->
     <Particles />
+
+    <!-- 顶部标题栏 -->
+    <div class="app-header neu-flat">
+      <div class="app-logo">
+        <img src="./assets/logo_b.png" alt="LumaCraft Logo" class="header-logo" />
+        <h1 class="app-title">LumaCraft</h1>
+      </div>
+    </div>
+
     <!-- 侧边栏 -->
     <Sidebar
       :is-collapsed="isSidebarCollapsed"
@@ -204,11 +213,49 @@ watch(htmlCode, (newCode) => {
   background-image: var(--neu-background-gradient);
 }
 
+/* 标题栏样式 */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100;
+  background-color: rgba(var(--neu-background-rgb), 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--neu-primary-color), #00e676);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .theme-switcher-container {
   position: fixed;
-  top: 1.25rem;
+  top: 12px; /* 调整为与标题栏对齐 */
   right: 1.5rem;
-  z-index: 100;
+  z-index: 110; /* 确保在标题栏之上 */
 }
 
 .main-content {
@@ -218,6 +265,7 @@ watch(htmlCode, (newCode) => {
   position: relative;
   overflow: hidden;
   margin-left: 256px;
+  margin-top: 70px; /* 为顶部标题栏留出空间 */
   transition: all 0.3s ease-in-out;
   padding: 1.25rem 1.5rem 1.5rem 1.5rem;
 }

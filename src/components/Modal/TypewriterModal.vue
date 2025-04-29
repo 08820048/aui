@@ -335,7 +335,7 @@ onBeforeUnmount(() => {
     <div class="modal-container" :class="{ 'loading': loading }">
       <!-- 模态框标题区 -->
       <div class="modal-header">
-        <h2 class="modal-title">{{ loading ? '代码生成中' : '代码生成完成' }}</h2>
+        <h2 class="modal-title">{{ loading ? '代码美化中' : '美化完成' }}</h2>
         <div class="modal-header-actions">
           <button v-if="loading" class="modal-stop-btn" @click="stopGeneration" title="停止生成">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">

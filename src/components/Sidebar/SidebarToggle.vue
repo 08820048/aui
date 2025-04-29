@@ -47,27 +47,32 @@ const toggleSidebar = () => {
   justify-content: center;
   padding: 0.5rem;
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: none;
   outline: none;
   transition: all 0.3s ease;
   color: var(--neu-text-color);
   background-color: var(--neu-background);
   border: 1px solid var(--neu-border-color);
+  border-radius: 0.5rem;
 }
 
 .toggle-btn-collapsed {
-  width: 32px;
-  height: 32px;
-  padding: 0.4rem;
+  width: 28px;
+  height: 28px;
+  padding: 0.35rem;
   margin: 0 auto;
 }
 
 .toggle-btn:active {
   box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
-  border-radius: 0.5rem;
   background-color: var(--neu-background);
+}
+
+.toggle-btn:hover {
+  background-color: rgba(var(--neu-primary-color-rgb), 0.1);
+  color: var(--neu-primary-color);
 }
 
 .icon {
