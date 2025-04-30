@@ -47,6 +47,12 @@ const successAudioElement = ref(null);
 let fadeOutTimer = null;
 const isAudioPlaying = ref(false);
 
+// 打字光标控制
+const cursorVisible = ref(true);
+let cursorBlinkTimer = null;
+const lastCharPosition = ref({ x: 0, y: 0 });
+const codeHighlightRef = ref(null);
+
 // 关闭模态框
 const closeModal = () => {
   emit('close');
@@ -215,6 +221,78 @@ const stopCodeSound = () => {
   }, 100);
 };
 
+// 获取当前打字光标位置
+const getCursorPosition = () => {
+  if (!codeHighlightRef.value) return { x: 0, y: 0 };
+
+  // 获取最后一个字符的位置
+  const preElement = codeHighlightRef.value.querySelector('pre');
+  if (!preElement) return { x: 0, y: 0 };
+
+  const text = displayedCode.value;
+  if (!text || text.length === 0) return { x: 0, y: 0 };
+
+  // 创建一个临时元素来计算位置
+  const tempSpan = document.createElement('span');
+  tempSpan.style.visibility = 'hidden';
+  tempSpan.style.position = 'absolute';
+  tempSpan.style.whiteSpace = 'pre-wrap';
+  tempSpan.style.font = window.getComputedStyle(preElement).font;
+
+  // 将文本分成行
+  const lines = text.split('\n');
+  let lastLine = lines[lines.length - 1];
+  let lastChar = lastLine[lastLine.length - 1] || '';
+
+  // 如果最后一个字符是\n，则使用空行
+  if (text[text.length - 1] === '\n') {
+    lastLine = '';
+    lastChar = '';
+  }
+
+  // 计算最后一行的位置
+  tempSpan.textContent = lines.slice(0, -1).join('\n');
+  preElement.appendChild(tempSpan);
+  const lineTop = tempSpan.offsetHeight;
+
+  // 计算最后一个字符的位置
+  tempSpan.textContent = lastLine;
+  const charLeft = tempSpan.offsetWidth;
+
+  // 清理
+  preElement.removeChild(tempSpan);
+
+  // 计算相对于容器的位置
+  const rect = preElement.getBoundingClientRect();
+  const containerRect = codeContainer.value.getBoundingClientRect();
+
+  return {
+    x: rect.left - containerRect.left + charLeft + 10, // 添加一些偏移量
+    y: rect.top - containerRect.top + lineTop + 10
+  };
+};
+
+
+
+// 开始光标闪烁
+const startCursorBlink = () => {
+  if (cursorBlinkTimer) clearInterval(cursorBlinkTimer);
+
+  cursorVisible.value = true;
+  cursorBlinkTimer = setInterval(() => {
+    cursorVisible.value = !cursorVisible.value;
+  }, 500);
+};
+
+// 停止光标闪烁
+const stopCursorBlink = () => {
+  if (cursorBlinkTimer) {
+    clearInterval(cursorBlinkTimer);
+    cursorBlinkTimer = null;
+  }
+  cursorVisible.value = false;
+};
+
 // 监听代码变化，实现打字效果
 watch(
   () => props.code,
@@ -223,40 +301,43 @@ watch(
       // 开始打字时播放音效
       if (newVal && newVal.length > 0 && !isAudioPlaying.value) {
         playCodeSound();
+        startCursorBlink();
       }
 
       clearInterval(typingTimer);
       let i = oldVal ? oldVal.length : 0;
-      let lastScrollPos = 0;
+      let lastPos = { x: 0, y: 0 };
 
       typingTimer = setInterval(() => {
         if (i < newVal.length) {
+          // 更新显示的代码
           displayedCode.value = newVal.slice(0, i + 1);
           i++;
           updateHighlight();
 
-          // 每10个字符滚动一次，避免过于频繁的滚动
-          if (i % 10 === 0 || i === newVal.length) {
-            scrollToBottom();
-          }
+          // 每次打字后更新光标位置
+          nextTick(() => {
+            const pos = getCursorPosition();
+            lastCharPosition.value = pos;
 
-          // 每100个字符打印一次调试信息
-          if (i % 100 === 0 && codeContainer.value) {
-            const container = codeContainer.value;
-            const currentScrollPos = container.scrollTop;
-            console.log(`Typing progress: ${i}/${newVal.length}, Scroll changed: ${currentScrollPos - lastScrollPos}`);
-            lastScrollPos = currentScrollPos;
-          }
+            // 滚动到底部（如果位置变化较大）
+            if (Math.abs(pos.y - lastPos.y) > 10 || i % 10 === 0) {
+              scrollToBottom();
+            }
+
+            lastPos = pos;
+          });
         } else {
           clearInterval(typingTimer);
           // 确保最后一次滚动到底部
           scrollToBottom(true); // 强制滚动
         }
-      }, 8); // 可调速度
+      }, 30); // 调慢速度，使打字效果更自然
     } else {
       displayedCode.value = newVal || '';
       updateHighlight();
       scrollToBottom(true); // 强制滚动
+      stopCursorBlink();
     }
   },
   { immediate: true }
@@ -310,6 +391,12 @@ onMounted(() => {
       scrollToBottom(true);
     }, 100);
   }
+
+  // 开始光标闪烁
+  if (props.loading) {
+    startCursorBlink();
+    particleActive.value = true;
+  }
 });
 
 // 组件卸载时清理
@@ -319,6 +406,9 @@ onBeforeUnmount(() => {
   clearTimeout(scrollTimer);
   clearTimeout(userScrollTimer);
   clearTimeout(fadeOutTimer);
+  stopCursorBlink();
+
+
 
   // 停止音频播放
   if (audioElement.value && isAudioPlaying.value) {
@@ -393,7 +483,21 @@ onBeforeUnmount(() => {
           <!-- 代码高亮区域 -->
           <div class="code-highlight-wrapper">
             <div class="code-highlight" ref="codeContainer" @scroll="handleScroll">
-              <pre><code v-html="highlightedCode" class="language-html"></code></pre>
+              <div ref="codeHighlightRef" class="code-content">
+                <pre><code v-html="highlightedCode" class="language-html"></code></pre>
+
+                <!-- 打字光标 -->
+                <div
+                  v-if="loading && cursorVisible"
+                  class="typing-cursor"
+                  :style="{
+                    left: `${lastCharPosition.x}px`,
+                    top: `${lastCharPosition.y - 18}px`
+                  }"
+                ></div>
+
+
+              </div>
             </div>
 
             <!-- 新内容提示 -->
@@ -741,6 +845,12 @@ onBeforeUnmount(() => {
   background-color: rgba(0, 0, 0, 0.25);
 }
 
+.code-content {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+}
+
 .code-highlight pre {
   width: 100%;
   min-height: 100%;
@@ -754,6 +864,27 @@ onBeforeUnmount(() => {
   line-height: 1.6;
   color: #2c3e50;
   white-space: pre-wrap; /* 确保长行换行 */
+}
+
+/* 打字光标样式 */
+.typing-cursor {
+  position: absolute;
+  width: 2px;
+  height: 18px;
+  background-color: var(--neu-primary-color);
+  animation: cursorBlink 1s infinite;
+  box-shadow: 0 0 5px var(--neu-primary-color);
+  border-radius: 1px;
+  z-index: 5;
+}
+
+@keyframes cursorBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* 复制按钮样式 */

@@ -131,6 +131,14 @@ watch(htmlCode, (newCode) => {
 
 <template>
   <div class="app-container transition-500">
+    <!-- 网格背景 -->
+    <div class="grid-background">
+      <div class="grid-lines"></div>
+      <div class="grid-lines-large"></div>
+      <div class="grid-glow"></div>
+      <div class="grid-animated"></div>
+    </div>
+
     <!-- 粒子效果 -->
     <Particles />
 
@@ -211,6 +219,7 @@ watch(htmlCode, (newCode) => {
   width: 100%;
   overflow: hidden;
   background-image: var(--neu-background-gradient);
+  position: relative; /* 确保定位上下文正确 */
 }
 
 /* 标题栏样式 */
@@ -268,6 +277,7 @@ watch(htmlCode, (newCode) => {
   margin-top: 70px; /* 为顶部标题栏留出空间 */
   transition: all 0.3s ease-in-out;
   padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+  z-index: 10; /* 确保内容在网格之上 */
 }
 
 .main-content-expanded {

@@ -3,8 +3,9 @@ import './style.css'
 import App from './App.vue'
 import highlightPlugin from './utils/highlighter'
 
-// 导入自定义高亮样式
+// 导入自定义样式
 import './styles/custom-highlight.css'
+import './styles/grid-background-enhanced.css'
 
 const app = createApp(App)
 
