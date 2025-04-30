@@ -27,6 +27,8 @@ const menuItems = ref([
     icon: 'code',
     active: true
   },
+  // 隐藏文件上传和风格选择按钮
+  /*
   {
     id: 2,
     title: '文件上传',
@@ -39,12 +41,7 @@ const menuItems = ref([
     icon: 'palette',
     active: false
   },
-  {
-    id: 4,
-    title: '设置',
-    icon: 'settings',
-    active: false
-  }
+  */
 ]);
 
 // 激活菜单项
@@ -78,8 +75,13 @@ const activateMenuItem = (id) => {
 
     <!-- 侧边栏底部 -->
     <div class="sidebar-footer">
-      <p v-if="!isCollapsed">LumaCraft_v1.0</p>
-      <p v-else>v1.0</p>
+      <!-- 设置图标按钮 -->
+      <div class="settings-button" @click="activateMenuItem(4)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </div>
     </div>
   </aside>
 </template>
@@ -158,8 +160,49 @@ const activateMenuItem = (id) => {
 .sidebar-footer {
   margin-top: auto;
   padding-top: 1rem;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 左对齐 */
   font-size: 0.875rem;
   color: #6b7280;
+  width: 100%;
+  padding-left: 0.5rem;
+}
+
+.settings-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--neu-background);
+  color: var(--neu-text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+  margin-left: 0.5rem; /* 左侧距离 */
+}
+
+.settings-button:hover {
+  color: var(--neu-primary-color);
+  transform: translateY(-2px);
+}
+
+.settings-button:active {
+  box-shadow: inset 2px 2px 5px var(--neu-shadow-dark), inset -2px -2px 5px var(--neu-shadow-light);
+  transform: translateY(0);
+}
+
+/* 移除版本文本样式 */
+
+/* 折叠状态下的设置按钮样式 */
+.sidebar-collapsed .sidebar-footer {
+  align-items: center;
+  padding-left: 0;
+}
+
+.sidebar-collapsed .settings-button {
+  margin-left: 0;
 }
 </style>

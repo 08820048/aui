@@ -106,7 +106,7 @@ const isAtBottom = () => {
   return scrollPosition >= (container.scrollHeight - 20);
 };
 
-// 自动滚动到底部
+// 自动滚动到底部 - 重写为更简单直接的实现
 const scrollToBottom = async (force = false) => {
   if (!codeContainer.value) return;
 
@@ -116,24 +116,26 @@ const scrollToBottom = async (force = false) => {
     return;
   }
 
+  // 等待DOM更新
   await nextTick();
   const container = codeContainer.value;
 
-  // 防抖：清除之前的定时器
-  clearTimeout(scrollTimer);
+  // 直接设置滚动位置 - 不使用平滑滚动，避免滚动中断
+  container.scrollTop = container.scrollHeight;
 
-  // 设置新的定时器，延迟执行滚动
-  scrollTimer = setTimeout(() => {
-    // 使用平滑滚动
-    container.scrollTo({
-      top: container.scrollHeight,
-      behavior: 'smooth'
-    });
-
-    // 滚动后重置新内容标志
+  // 再次确保滚动到底部
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
     hasNewContent.value = false;
   }, 50);
-};
+
+  // 打印调试信息
+  console.log('Scrolling to bottom', {
+    scrollHeight: container.scrollHeight,
+    clientHeight: container.clientHeight,
+    scrollTop: container.scrollTop
+  });
+}
 
 // 处理用户滚动事件
 const handleScroll = () => {
@@ -225,25 +227,36 @@ watch(
 
       clearInterval(typingTimer);
       let i = oldVal ? oldVal.length : 0;
+      let lastScrollPos = 0;
+
       typingTimer = setInterval(() => {
         if (i < newVal.length) {
           displayedCode.value = newVal.slice(0, i + 1);
           i++;
           updateHighlight();
-          // 每20个字符滚动一次，避免过于频繁的滚动
-          if (i % 20 === 0 || i === newVal.length) {
+
+          // 每10个字符滚动一次，避免过于频繁的滚动
+          if (i % 10 === 0 || i === newVal.length) {
             scrollToBottom();
+          }
+
+          // 每100个字符打印一次调试信息
+          if (i % 100 === 0 && codeContainer.value) {
+            const container = codeContainer.value;
+            const currentScrollPos = container.scrollTop;
+            console.log(`Typing progress: ${i}/${newVal.length}, Scroll changed: ${currentScrollPos - lastScrollPos}`);
+            lastScrollPos = currentScrollPos;
           }
         } else {
           clearInterval(typingTimer);
           // 确保最后一次滚动到底部
-          scrollToBottom();
+          scrollToBottom(true); // 强制滚动
         }
       }, 8); // 可调速度
     } else {
       displayedCode.value = newVal || '';
       updateHighlight();
-      scrollToBottom();
+      scrollToBottom(true); // 强制滚动
     }
   },
   { immediate: true }
@@ -286,10 +299,16 @@ onMounted(() => {
   // 初始化时重置自动滚动状态
   shouldAutoScroll.value = true;
   hasNewContent.value = false;
+  window.lastScrollTime = 0;
 
   // 添加滚动事件监听
   if (codeContainer.value) {
     codeContainer.value.addEventListener('scroll', handleScroll);
+
+    // 初始化后立即滚动到底部
+    setTimeout(() => {
+      scrollToBottom(true);
+    }, 100);
   }
 });
 
@@ -384,9 +403,9 @@ onBeforeUnmount(() => {
               @click="scrollToNewContent"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
+                <path d="M12 5v14M5 12h14"></path>
               </svg>
-              <span>新内容</span>
+              <span>有新内容，点击查看</span>
             </div>
           </div>
         </div>
@@ -607,6 +626,20 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
+/* 滚动指示器 */
+.code-highlight-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to top, rgba(241, 243, 245, 0.8), transparent);
+  pointer-events: none;
+  opacity: 0.7;
+  z-index: 5;
+}
+
 .code-highlight {
   width: 100%;
   height: 100%;
@@ -617,15 +650,17 @@ onBeforeUnmount(() => {
   border-radius: 12px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  position: relative; /* 确保定位正确 */
+  max-height: 100%; /* 确保有最大高度限制 */
 }
 
 /* 新内容提示样式 */
 .new-content-indicator {
   position: absolute;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 168, 255, 0.9);
+  right: 20px; /* 改为右侧定位，避免遮挡中间内容 */
+  transform: none; /* 移除居中变换 */
+  background: rgba(0, 168, 255, 0.95);
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -633,18 +668,19 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(0, 168, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 168, 255, 0.6);
   cursor: pointer;
   z-index: 10;
-  animation: bounceIn 0.5s ease-in-out, pulse 2s infinite ease-in-out;
+  animation: bounceIn 0.5s ease-in-out, pulse 1.5s infinite ease-in-out;
   transition: all 0.3s ease-in-out;
   backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 500;
 }
 
 .new-content-indicator:hover {
   background: rgba(0, 168, 255, 1);
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 168, 255, 0.5);
 }
 
@@ -707,16 +743,17 @@ onBeforeUnmount(() => {
 
 .code-highlight pre {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 1.5rem 2rem 2rem 1.5rem;
   background-color: transparent !important;
   border-radius: 12px;
-  overflow: auto;
+  overflow: visible; /* 改为visible，避免嵌套滚动 */
   font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   line-height: 1.6;
   color: #2c3e50;
+  white-space: pre-wrap; /* 确保长行换行 */
 }
 
 /* 复制按钮样式 */
