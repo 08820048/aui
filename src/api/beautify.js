@@ -2,7 +2,7 @@ import { request } from './http';
 
 // 网页美化接口
 export function beautifyHtml({ html_code, style_id }) {
-  return request('http://127.0.0.1:3000/beautify', {
+  return request('https://f15f-124-90-147-91.ngrok-free.app/beautify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ html_code, style_id }),
@@ -11,7 +11,7 @@ export function beautifyHtml({ html_code, style_id }) {
 
 // 流式网页美化接口（SSE via fetch ReadableStream）
 export async function beautifyHtmlStream({ html_code, style_id }, { onContent, onDone, onError, signal }) {
-  const response = await fetch('http://127.0.0.1:3000/api/beautify/stream', {
+  const response = await fetch('https://f15f-124-90-147-91.ngrok-free.app/api/beautify/stream', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ html_code, style_id }),
