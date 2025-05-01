@@ -1,20 +1,20 @@
 import { request } from './http';
 
 // 网页美化接口
-export function beautifyHtml({ html_code, style }) {
+export function beautifyHtml({ html_code, style_id }) {
   return request('http://127.0.0.1:3000/beautify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ html_code, style }),
+    body: JSON.stringify({ html_code, style_id }),
   });
 }
 
 // 流式网页美化接口（SSE via fetch ReadableStream）
-export async function beautifyHtmlStream({ html_code, style }, { onContent, onDone, onError, signal }) {
+export async function beautifyHtmlStream({ html_code, style_id }, { onContent, onDone, onError, signal }) {
   const response = await fetch('http://127.0.0.1:3000/api/beautify/stream', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ html_code, style }),
+    body: JSON.stringify({ html_code, style_id }),
     signal, // 传入中止信号
   });
 

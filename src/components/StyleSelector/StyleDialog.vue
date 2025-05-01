@@ -34,7 +34,8 @@ const confirmStyle = () => {
 
 // 处理风格变化
 const handleStyleChange = (style) => {
-  selectedStyle.value = style.id;
+  // 如果是对象，使用id属性，否则直接使用值（可能是自定义输入的字符串）
+  selectedStyle.value = typeof style === 'object' ? style.id : style;
 };
 
 // 点击遮罩层关闭对话框
@@ -75,13 +76,13 @@ const onUnmounted = () => {
           </svg>
         </button>
       </div>
-      
+
       <div class="dialog-content">
         <p class="dialog-description">请选择您喜欢的美化风格，我们将根据您的选择对代码进行美化处理。</p>
-        
+
         <StyleSelector v-model="selectedStyle" @change="handleStyleChange" />
       </div>
-      
+
       <div class="dialog-footer">
         <button class="dialog-btn dialog-cancel-btn" @click="closeDialog">取消</button>
         <button class="dialog-btn dialog-confirm-btn" @click="confirmStyle">开始美化</button>
@@ -238,7 +239,7 @@ const onUnmounted = () => {
     width: 95%;
     max-height: 95vh;
   }
-  
+
   .dialog-header,
   .dialog-content,
   .dialog-footer {

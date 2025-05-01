@@ -19,14 +19,34 @@ const emit = defineEmits(['update:modelValue', 'change']);
 // 当前选中的风格
 const selectedStyle = ref(null);
 
+// 自定义风格 ID
+const customStyleId = ref('');
+
 /**
  * 选择风格
  * @param {Object} style 选中的风格对象
  */
 const selectStyle = (style) => {
   selectedStyle.value = style;
+  customStyleId.value = ''; // 清空自定义输入
   emit('update:modelValue', style.id);
   emit('change', style);
+};
+
+/**
+ * 处理自定义风格 ID 输入
+ */
+const handleCustomStyleInput = () => {
+  if (customStyleId.value.trim()) {
+    // 如果有自定义输入，则使用该值作为风格 ID
+    selectedStyle.value = null; // 清除已选风格
+    emit('update:modelValue', customStyleId.value.trim());
+    emit('change', { id: customStyleId.value.trim(), name: '自定义风格' });
+  } else if (selectedStyle.value) {
+    // 如果清空了自定义输入但有选中的风格，则使用选中的风格
+    emit('update:modelValue', selectedStyle.value.id);
+    emit('change', selectedStyle.value);
+  }
 };
 
 /**
@@ -42,7 +62,7 @@ const initDefaultStyle = () => {
       return;
     }
   }
-  
+
   // 否则使用配置中标记为默认的风格
   const defaultStyle = props.styles.find(style => style.isDefault);
   if (defaultStyle) {
@@ -74,6 +94,19 @@ onMounted(initDefaultStyle);
 
 <template>
   <div class="style-selector">
+    <!-- 添加测试用的唯一标识符输入框 -->
+    <div class="custom-style-input">
+      <label for="customStyleId">测试用唯一标识符：</label>
+      <input
+        id="customStyleId"
+        v-model="customStyleId"
+        type="text"
+        placeholder="例如：3477a7ee-25d8-11f0-9e00-f7073c18c697"
+        @input="handleCustomStyleInput"
+        class="custom-style-input-field"
+      />
+    </div>
+
     <div class="style-selector-container">
       <StyleCard
         v-for="style in styles"
@@ -91,6 +124,44 @@ onMounted(initDefaultStyle);
   width: 100%;
   overflow: hidden;
   padding: 1rem 0;
+}
+
+/* 自定义风格输入框样式 */
+.custom-style-input {
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.custom-style-input label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--neu-text-color);
+}
+
+.custom-style-input-field {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--neu-border-color);
+  background-color: var(--neu-background);
+  color: var(--neu-text-color);
+  font-size: 0.9rem;
+  width: 100%;
+  box-shadow: inset 2px 2px 5px var(--neu-shadow-dark), inset -2px -2px 5px var(--neu-shadow-light);
+  transition: all 0.3s ease;
+}
+
+.custom-style-input-field:focus {
+  outline: none;
+  border-color: var(--neu-primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--neu-primary-color-rgb), 0.2), inset 2px 2px 5px var(--neu-shadow-dark), inset -2px -2px 5px var(--neu-shadow-light);
+}
+
+.custom-style-input-field::placeholder {
+  color: rgba(var(--neu-text-color), 0.5);
+  opacity: 0.7;
 }
 
 .style-selector-container {

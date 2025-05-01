@@ -61,7 +61,7 @@ const beautifyCode = async (data) => {
 
   try {
     await beautifyHtmlStream(
-      { html_code: data.code, style: data.style },
+      { html_code: data.code, style_id: data.style },
       {
         signal,
         onContent: (chunk) => {
@@ -131,13 +131,6 @@ watch(htmlCode, (newCode) => {
 
 <template>
   <div class="app-container transition-500">
-    <!-- 网格背景 -->
-    <div class="grid-background">
-      <div class="grid-lines"></div>
-      <div class="grid-lines-large"></div>
-      <div class="grid-glow"></div>
-      <div class="grid-animated"></div>
-    </div>
 
     <!-- 粒子效果 -->
     <Particles />
